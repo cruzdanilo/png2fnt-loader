@@ -1,0 +1,41 @@
+{
+  "name": "png2fnt-loader",
+  "version": "0.1.0",
+  "description": "module for loading png fonts as angelcode bmfont (.fnt, .xml) for webpack",
+  "main": "index.js",
+  "repository": "cruzdanilo/png2fnt-loader",
+  "keywords": [
+    "font",
+    "png",
+    "fnt",
+    "xml",
+    "angelcode",
+    "bmfont",
+    "webpack",
+    "loader"
+  ],
+  "author": {
+    "name": "danilo neves cruz",
+    "email": "cruzdanilo@gmail.com"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cruzdanilo/png2fnt-loader/issues"
+  },
+  "homepage": "https://github.com/cruzdanilo/png2fnt-loader#readme",
+  "dependencies": {
+    "imagemin": "^6.1.0",
+    "imagemin-optipng": "^6.0.0",
+    "loader-utils": "^1.2.3",
+    "sharp": "^0.21.3",
+    "xmlbuilder": "^11.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base"
+  }
+}
