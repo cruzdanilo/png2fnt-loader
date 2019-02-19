@@ -20,7 +20,7 @@ module.exports = async function loader(content) {
     data: fontBuffer,
     info: { width: height, height: width },
   } = await font.toBuffer({ resolveWithObject: true });
-  const alpha = await font.clone().extractChannel(3).toBuffer();
+  const alpha = await font.clone().extractChannel(3).toBuffer({ resolveWithObject: false });
   const rowLength = height * channels;
   const emptyLine = Buffer.alloc(rowLength).fill(Buffer.from([0x00, 0x00, 0x00, 0xff]));
   const chars = [];
