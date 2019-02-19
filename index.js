@@ -24,7 +24,7 @@ module.exports = async function loader(content) {
   charSequence.forEach((char) => {
     for (let x = x0; x < width; x += 1) {
       if (!emptyLine.compare(alpha, x * lineLength, (x + 1) * lineLength)) {
-        if (charset.has(char)) chars.push({ id: char.charCodeAt(), x, width: x - x0 });
+        if (charset.has(char)) chars.push({ id: char.charCodeAt(), x: x0, width: x - x0 });
         x0 = x + 1;
         break;
       }
@@ -42,7 +42,7 @@ module.exports = async function loader(content) {
         height,
         xoffset: 0,
         yoffset: 0,
-        xadvance: char.width,
+        xadvance: char.width + 1,
         page: 0,
       });
       return xml;
