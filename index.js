@@ -16,14 +16,15 @@ module.exports = async function loader(content) {
   const font = sharp(content).ensureAlpha().raw();
   const { data: alpha, info: { width: height, height: width } } = await font
     .clone().extractChannel(3).rotate(90).toBuffer({ resolveWithObject: true });
+  const ignoreColumns = new Set([...(options.ignoreColumns || [])]);
   const channels = 4;
-  const lineLength = height * channels;
-  const emptyLine = Buffer.alloc(lineLength).fill(Buffer.from([0x00, 0x00, 0x00, 0xff]));
+  const rowLength = height * channels;
+  const emptyLine = Buffer.alloc(rowLength).fill(Buffer.from([0x00, 0x00, 0x00, 0xff]));
   const chars = [];
   let x0 = 0;
   charSequence.forEach((char) => {
     for (let x = x0; x < width; x += 1) {
-      if (!emptyLine.compare(alpha, x * lineLength, (x + 1) * lineLength)) {
+      if (!ignoreColumns.has(x) && !emptyLine.compare(alpha, x * rowLength, (x + 1) * rowLength)) {
         if (charset.has(char)) chars.push({ id: char.charCodeAt(), x: x0, width: x - x0 });
         x0 = x + 1;
         break;
