@@ -13,11 +13,14 @@ module.exports = async function loader(content) {
   const outputPath = options.outputPath || path.posix.relative(this.rootContext, this.context);
   const charSequence = [...(options.chars || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!-_~#"\'&()[]|`/\\@°+=*%€$£¢<>©®')];
   const charset = new Set([...(options.charset || ` ${charSequence}`)]);
-  const font = sharp(content).ensureAlpha().raw();
-  const { data: alpha, info: { width: height, height: width } } = await font
-    .clone().extractChannel(3).rotate(90).toBuffer({ resolveWithObject: true });
   const ignoreColumns = new Set([...(options.ignoreColumns || [])]);
   const channels = 4;
+  const font = sharp(content).ensureAlpha().raw().rotate(90);
+  const {
+    data: fontBuffer,
+    info: { width: height, height: width },
+  } = await font.toBuffer({ resolveWithObject: true });
+  const alpha = await font.clone().extractChannel(3).toBuffer();
   const rowLength = height * channels;
   const emptyLine = Buffer.alloc(rowLength).fill(Buffer.from([0x00, 0x00, 0x00, 0xff]));
   const chars = [];
@@ -31,11 +34,22 @@ module.exports = async function loader(content) {
       }
     }
   });
+  x0 = 0;
+  const stripped = Buffer.concat(chars.map((char) => {
+    const { x } = char;
+    Object.assign(char, { x: x0 });
+    const charWidth = char.width + 1;
+    x0 += charWidth;
+    return fontBuffer.slice(x * rowLength, (x + charWidth) * rowLength);
+  }));
   if (charset.has(' ') && !charSequence.includes(' ')) {
     const avgWidth = Math.round(chars.reduce((sum, char) => sum + char.width, 0) / chars.length);
     chars.push({ id: ' '.charCodeAt(), x: -avgWidth, width: avgWidth });
   }
-  const texture = await imagemin.buffer(await font.png().toBuffer(), { use: [optipng()] });
+  const texture = await imagemin.buffer(await sharp(
+    stripped,
+    { raw: { width: height, height: stripped.length / rowLength, channels } },
+  ).rotate(270).png().toBuffer(), { use: [optipng()] });
   const textureName = loaderUtils.interpolateName(this, options.name || '[name].[hash:8].png', { content: texture });
   const fontData = chars.reduce(
     (xml, char) => {
