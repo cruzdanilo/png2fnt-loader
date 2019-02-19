@@ -12,7 +12,7 @@ module.exports = async function loader(content) {
   const options = loaderUtils.getOptions(this) || {};
   const outputPath = options.outputPath || path.posix.relative(this.rootContext, this.context);
   const charSequence = [...(options.chars || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!-_~#"\'&()[]|`/\\@°+=*%€$£¢<>©®')];
-  const charset = new Set([...(options.charset || ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.0123456789')]);
+  const charset = new Set([...(options.charset || ` ${charSequence}`)]);
   const font = sharp(content).ensureAlpha().raw();
   const { data: alpha, info: { width: height, height: width } } = await font
     .clone().extractChannel(3).rotate(90).toBuffer({ resolveWithObject: true });
