@@ -30,6 +30,10 @@ module.exports = async function loader(content) {
       }
     }
   });
+  if (charset.has(' ') && !charSequence.includes(' ')) {
+    const avgWidth = Math.round(chars.reduce((sum, char) => sum + char.width, 0) / chars.length);
+    chars.push({ id: ' '.charCodeAt(), x: -avgWidth, width: avgWidth });
+  }
   const texture = await imagemin.buffer(await font.png().toBuffer(), { use: [optipng()] });
   const textureName = loaderUtils.interpolateName(this, options.name || '[name].[hash:8].png', { content: texture });
   const fontData = chars.reduce(
