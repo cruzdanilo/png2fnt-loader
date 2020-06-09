@@ -50,7 +50,8 @@ module.exports = async function loader(content) {
     stripped,
     { raw: { width: height, height: stripped.length / rowLength, channels } },
   ).rotate(270).png().toBuffer(), { use: [optipng()] });
-  const textureName = loaderUtils.interpolateName(this, options.name || '[name].[hash:8].png', { content: texture });
+  const name = options.name || '[name].[contenthash:8].[ext]';
+  const textureName = loaderUtils.interpolateName(this, name, { content: texture });
   const fontData = chars.reduce(
     (xml, char) => {
       xml.ele('char', { id: char.id, x: char.x, y: 0, width: char.width, height, xoffset: 0, yoffset: 0, xadvance: char.width + 1, page: 0 }); // eslint-disable-line object-curly-newline
@@ -68,7 +69,9 @@ module.exports = async function loader(content) {
       .ele('chars', { count: chars.length }),
   ).end({ pretty: true });
   const texturePath = path.posix.join(outputPath, textureName);
-  const fontDataPath = path.posix.join(outputPath, loaderUtils.interpolateName(this, '[name].[hash:8].xml', { content: fontData }));
+  const fontDataPath = path.posix.join(outputPath, loaderUtils.interpolateName({
+    ...this, resourcePath: this.resourcePath.replace(/\.png(?!.*\.png)/, '.xml'),
+  }, name, { content: fontData }));
   if (!done.has(textureName)) {
     done.add(textureName);
     this.emitFile(texturePath, texture);
