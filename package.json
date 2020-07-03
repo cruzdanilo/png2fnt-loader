@@ -1,6 +1,6 @@
 {
   "name": "png2fnt-loader",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "module for loading png fonts as angelcode bmfont (.fnt, .xml) for webpack",
   "main": "index.js",
   "repository": "cruzdanilo/png2fnt-loader",
