@@ -9,6 +9,7 @@ const extRegex = /\.png(?!.*\.png)/;
 const build = async (content, self) => {
   const {
     webp = true,
+    immutable = true,
     prettyPrint = false,
     ignoreColumns = [],
     name = '[name].[contenthash:8].[ext]',
@@ -65,7 +66,7 @@ const build = async (content, self) => {
     const data = await optimizer(await pipeline.toBuffer());
     const filepath = interpolateName({ ...self, resourcePath: resourcePath.replace(extRegex, ext) },
       name, { context, content: data });
-    self.emitFile(filepath, data);
+    self.emitFile(filepath, data, false, { immutable });
     return filepath;
   }));
 
@@ -87,7 +88,7 @@ const build = async (content, self) => {
   ).end({ prettyPrint });
   const fontData = interpolateName({ ...self, resourcePath: resourcePath.replace(extRegex, '.xml') },
     name, { context, content: fontDataBuffer });
-  self.emitFile(fontData, fontDataBuffer);
+  self.emitFile(fontData, fontDataBuffer, false, { immutable });
   return { fontData, textures };
 };
 
